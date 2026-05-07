@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultra Stream Player 2026 - Glass Edition</title>
+    
+    <link href="https://vjs.zencdn.net/10/video-js.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@videojs/themes@1/dist/city/index.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent: #00d2ff;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a1a2e 0%, #020205 100%);
+            color: #fff;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .main-card {
+            width: 100%;
+            max-width: 950px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        h2 { font-weight: 300; margin-bottom: 20px; letter-spacing: 2px; color: var(--accent); }
+
+        /* منطقة الرفع (Upload Zone) */
+        .upload-area {
+            border: 2px dashed var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .upload-area:hover { background: rgba(255,255,255,0.05); border-color: var(--accent); }
+        .upload-area p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
+
+        /* ستايل المشغل الزجاجي المطور */
+        .video-js {
+            border-radius: 15px;
+            overflow: hidden;
+            width: 100% !important;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        /* زر التشغيل الكبير الشفاف */
+        .vjs-theme-city .vjs-big-play-button {
+            background: rgba(0, 0, 0, 0.3) !important;
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border) !important;
+            width: 90px !important;
+            height: 90px !important;
+            line-height: 90px !important;
+            border-radius: 50% !important;
+            font-size: 3em !important;
+        }
+
+        /* إخفاء القوائم في وضع الـ Minimal (اختياري) */
+        .minimal-mode .vjs-control-bar {
+            background: transparent !important;
+            backdrop-filter: none !important;
+        }
+
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="main-card">
+    <h2>منصة البث الذكية 2026</h2>
+
+    <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <p>اسحب الفيديو أو الأغنية هنا، أو اضغط للاختيار</p>
+        <input type="file" id="file-input" accept="video/*, audio/*">
+    </div>
+
+    <div id="player-container">
+        <video 
+            id="vjs-player" 
+            class="video-js vjs-big-play-centered vjs-theme-city vjs-fluid" 
+            controls 
+            preload="auto">
+            <p class="vjs-no-js">المتصفح لا يدعم التشغيل.</p>
+        </video>
+    </div>
+</div>
+
+<script src="https://vjs.zencdn.net/10/video.min.js"></script>
+
+<script>
+    // 1. تهيئة المشغل بأحدث إعدادات 2026
+    const player = videojs('vjs-player', {
+        playbackRates: [0.5, 1, 1.5, 2, 4],
+        responsive: true,
+        controlBar: {
+            skipButtons: { forward: 10, backward: 10 }
+        }
+    });
+
+    const fileInput = document.getElementById('file-input');
+    const dropZone = document.getElementById('drop-zone');
+
+    // 2. معالجة رفع الملفات وتشغيلها فوراً
+    function handleFile(file) {
+        if (file) {
+            const fileURL = URL.createObjectURL(file);
+            const fileType = file.type;
+
+            // تغيير المصدر في المشغل
+            player.src({ type: fileType, src: fileURL });
+            player.load();
+            player.play();
+
+            console.log("جاري تشغيل: " + file.name);
+        }
+    }
+
+    fileInput.addEventListener('change', (e) => {
+        handleFile(e.target.files[0]);
+    });
+
+    // 3. دعم الـ Drag & Drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = "#00d2ff";
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.borderColor = "rgba(255,255,255,0.2)";
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        handleFile(e.dataTransfer.files[0]);
+    });
+
+    // 4. وضع الـ Minimal التلقائي عند التشغيل (اختياري كشياكة)
+    player.on('play', () => {
+        document.querySelector('.main-card').classList.add('minimal-mode');
+    });
+
+    player.ready(() => {
+        console.log("المشغل الزجاجي جاهز لعام 2026!");
+    });
+</script>
+
+</body>
+</html>
